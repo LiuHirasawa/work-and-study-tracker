@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "مدیریت تمرکز و مطالعه",
+  "version": "4.2",
+  "description": "مدیریت دروس، زمان‌بندی، برنامه هفتگی، یادداشت و تقویم",
+  "action": {
+    "default_title": "باز کردن داشبورد",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage", "tabs"],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
