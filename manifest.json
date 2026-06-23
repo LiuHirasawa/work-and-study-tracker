@@ -1,10 +1,10 @@
 {
   "manifest_version": 3,
-  "name": "مدیریت تمرکز و مطالعه",
-  "version": "4.2",
-  "description": "مدیریت دروس، زمان‌بندی، برنامه هفتگی، یادداشت و تقویم",
+  "name": "Task & Project Manager",
+  "version": "6.0",
+  "description": "Manage projects, tasks, weekly plans, notes and calendar",
   "action": {
-    "default_title": "باز کردن داشبورد",
+    "default_title": "Open Dashboard",
     "default_icon": {
       "16": "icon16.png",
       "48": "icon48.png",

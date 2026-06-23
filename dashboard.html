@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>داشبورد مدیریت مطالعاتی</title>
+    <title>Task & Project Manager</title>
     <style>
         * {
             margin: 0;
@@ -16,12 +16,13 @@
             color: #e2e8f0;
             padding: 20px;
             min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
 
-        /* ===== HEADER جدید ===== */
         .main-header {
             display: flex;
             justify-content: space-between;
@@ -32,7 +33,7 @@
             background: linear-gradient(135deg, #1e293b, #0f172a);
             border-radius: 24px;
             border: 1px solid #334155;
-            margin-bottom: 20px;
+            margin-bottom: 12px;
         }
         .main-header .brand {
             font-size: 24px;
@@ -43,12 +44,18 @@
         .main-header .brand span {
             color: #facc15;
         }
+        .main-header .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
         .main-header .study-time {
             background: #0f172a;
             padding: 8px 20px;
             border-radius: 40px;
             border: 1px solid #334155;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             color: #22c55e;
             direction: ltr;
@@ -58,15 +65,43 @@
             font-weight: 400;
             font-size: 14px;
         }
+        .lang-toggle {
+            display: flex;
+            gap: 4px;
+            background: #0f172a;
+            border-radius: 40px;
+            padding: 4px;
+            border: 1px solid #334155;
+        }
+        .lang-toggle button {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .lang-toggle button.active {
+            background: #3b82f6;
+            color: white;
+        }
+        .lang-toggle button:hover:not(.active) {
+            background: #334155;
+            color: #f1f5f9;
+        }
 
+        /* ===== جمله انگیزشی ===== */
         .motivation-section {
             text-align: center;
-            padding: 10px 0 16px 0;
+            padding: 10px 0 14px 0;
             border-bottom: 1px solid #334155;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
         .motivation-section .motivation-text {
-            font-size: 28px;
+            font-size: 26px;
             font-weight: 700;
             background: linear-gradient(90deg, #facc15, #f59e0b);
             -webkit-background-clip: text;
@@ -74,26 +109,8 @@
             background-clip: text;
             font-family: 'Segoe UI', 'Tahoma', cursive;
             letter-spacing: 1px;
-            cursor: pointer;
+            cursor: default;
             transition: 0.3s;
-        }
-        .motivation-section .motivation-text:hover {
-            transform: scale(1.02);
-        }
-        .motivation-section .edit-motivation {
-            font-size: 13px;
-            color: #64748b;
-            cursor: pointer;
-            border: 1px dashed #334155;
-            padding: 2px 14px;
-            border-radius: 30px;
-            display: inline-block;
-            margin-top: 6px;
-            transition: 0.2s;
-        }
-        .motivation-section .edit-motivation:hover {
-            border-color: #3b82f6;
-            color: #f1f5f9;
         }
 
         .status-bar {
@@ -368,36 +385,7 @@
         .log-item .log-actions .del-log { color: #ef4444; }
         .log-item .log-actions .del-log:hover { color: #f87171; }
 
-        /* ===== BACKUP SECTION ===== */
-        .backup-section {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-        .backup-section button {
-            padding: 10px 24px;
-            border: none;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        #exportBackupBtn {
-            background: #3b82f6;
-            color: white;
-        }
-        #exportBackupBtn:hover { background: #2563eb; }
-        #importBackupBtn {
-            background: #8b5cf6;
-            color: white;
-        }
-        #importBackupBtn:hover { background: #7c3aed; }
-        #importBackupInput {
-            display: none;
-        }
-
-        /* ===== SUBJECTS ===== */
+        /* ===== PROJECTS ===== */
         .add-row {
             display: flex;
             gap: 10px;
@@ -428,7 +416,7 @@
         }
         .add-row button:hover { background: #2563eb; }
 
-        .subject-card {
+        .project-card {
             background: #0f172a;
             border-radius: 16px;
             padding: 14px;
@@ -436,8 +424,8 @@
             border: 1px solid #334155;
             transition: 0.2s;
         }
-        .subject-card:hover { border-color: #3b82f6; }
-        .subject-card .subject-title {
+        .project-card:hover { border-color: #3b82f6; }
+        .project-card .project-title {
             font-weight: 700;
             font-size: 17px;
             color: #facc15;
@@ -445,14 +433,14 @@
             justify-content: space-between;
             margin-bottom: 6px;
         }
-        .subject-card .subject-stats {
+        .project-card .project-stats {
             display: flex;
             gap: 16px;
             font-size: 13px;
             color: #94a3b8;
             margin-bottom: 8px;
         }
-        .subject-card .subject-stats span {
+        .project-card .project-stats span {
             background: #1e293b;
             padding: 2px 12px;
             border-radius: 20px;
@@ -530,6 +518,276 @@
             transition: 0.3s;
             width: 0%;
         }
+
+        /* ===== TASKS ===== */
+        .task-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        .task-filters input[type="date"] {
+            padding: 8px 14px;
+            border-radius: 40px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 14px;
+            outline: none;
+        }
+        .task-filters input[type="date"]:focus { border-color: #3b82f6; }
+        .task-filters select {
+            padding: 8px 14px;
+            border-radius: 40px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 14px;
+            outline: none;
+        }
+        .task-filters select:focus { border-color: #3b82f6; }
+        .task-filters button {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 40px;
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .task-filters button:hover { background: #2563eb; }
+        .task-filters .add-task-btn {
+            background: #22c55e;
+        }
+        .task-filters .add-task-btn:hover { background: #16a34a; }
+
+        .task-item {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            border: 1px solid #334155;
+            transition: 0.2s;
+        }
+        .task-item:hover { border-color: #3b82f6; }
+        .task-item .task-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .task-item .task-title {
+            font-weight: 700;
+            font-size: 17px;
+            color: #f1f5f9;
+            flex: 1;
+        }
+        .task-item .task-title.done-title {
+            text-decoration: line-through;
+            color: #64748b;
+        }
+        .task-item .task-priority {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 2px 12px;
+            border-radius: 30px;
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+        .task-item .task-priority.high { color: #ef4444; border-color: #ef4444; }
+        .task-item .task-priority.medium { color: #f59e0b; border-color: #f59e0b; }
+        .task-item .task-priority.low { color: #22c55e; border-color: #22c55e; }
+        .task-item .task-category {
+            font-size: 13px;
+            color: #94a3b8;
+            background: #1e293b;
+            padding: 2px 12px;
+            border-radius: 30px;
+        }
+        .task-item .task-recurrence {
+            font-size: 12px;
+            color: #8b5cf6;
+            background: #1e293b;
+            padding: 2px 12px;
+            border-radius: 30px;
+            border: 1px solid #8b5cf6;
+        }
+        .task-item .task-desc {
+            color: #94a3b8;
+            font-size: 14px;
+            margin: 8px 0 10px 0;
+            padding-right: 4px;
+        }
+        .task-item .task-subtasks {
+            margin-right: 20px;
+            margin-top: 6px;
+        }
+        .task-item .task-subtasks .subtask-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 3px 0;
+            font-size: 14px;
+        }
+        .task-item .task-subtasks .subtask-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #3b82f6;
+            cursor: pointer;
+        }
+        .task-item .task-subtasks .subtask-item .sub-done {
+            text-decoration: line-through;
+            color: #64748b;
+        }
+        .task-item .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .task-item .task-actions button {
+            background: transparent;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            padding: 4px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: 0.2s;
+        }
+        .task-item .task-actions button:hover {
+            background: #334155;
+            color: #f1f5f9;
+        }
+        .task-item .task-actions .done-task-btn {
+            border-color: #22c55e;
+            color: #22c55e;
+        }
+        .task-item .task-actions .done-task-btn:hover {
+            background: #22c55e;
+            color: white;
+        }
+        .task-item .task-actions .del-task-btn {
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        .task-item .task-actions .del-task-btn:hover {
+            background: #ef4444;
+            color: white;
+        }
+        .task-item .task-override-note {
+            background: #1e293b;
+            border-right: 3px solid #facc15;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #facc15;
+            margin-top: 6px;
+        }
+        .task-future-badge {
+            font-size: 12px;
+            color: #facc15;
+            background: #1e293b;
+            padding: 2px 12px;
+            border-radius: 30px;
+            border: 1px solid #facc15;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 600px;
+            width: 95%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #334155;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal-box h2 {
+            margin-bottom: 20px;
+            color: #f1f5f9;
+        }
+        .modal-box .form-group {
+            margin-bottom: 16px;
+        }
+        .modal-box .form-group label {
+            display: block;
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .modal-box .form-group input,
+        .modal-box .form-group select,
+        .modal-box .form-group textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 14px;
+            outline: none;
+        }
+        .modal-box .form-group textarea {
+            border-radius: 16px;
+            min-height: 80px;
+            resize: vertical;
+        }
+        .modal-box .form-group input:focus,
+        .modal-box .form-group select:focus,
+        .modal-box .form-group textarea:focus {
+            border-color: #3b82f6;
+        }
+        .modal-box .form-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .modal-box .form-row .form-group {
+            flex: 1;
+            min-width: 120px;
+        }
+        .modal-box .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .modal-box .modal-actions button {
+            padding: 10px 30px;
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .modal-box .modal-actions .btn-save {
+            background: #3b82f6;
+            color: white;
+        }
+        .modal-box .modal-actions .btn-save:hover { background: #2563eb; }
+        .modal-box .modal-actions .btn-cancel {
+            background: #334155;
+            color: #e2e8f0;
+        }
+        .modal-box .modal-actions .btn-cancel:hover { background: #475569; }
 
         /* ===== WEEKLY ===== */
         .weekly-plan-list {
@@ -627,6 +885,38 @@
             background: #ef4444;
         }
         .weekly-actions .del-plan:hover { background: #dc2626; }
+
+        .weekly-goal-edit {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+        .weekly-goal-edit input {
+            padding: 6px 14px;
+            border-radius: 40px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 14px;
+            width: 100px;
+            text-align: center;
+            outline: none;
+        }
+        .weekly-goal-edit input:focus { border-color: #3b82f6; }
+        .weekly-goal-edit button {
+            padding: 6px 18px;
+            border: none;
+            border-radius: 40px;
+            background: #3b82f6;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 13px;
+        }
+        .weekly-goal-edit button:hover { background: #2563eb; }
 
         /* ===== NOTES ===== */
         .note-editor {
@@ -726,7 +1016,7 @@
             background: #1e293b;
         }
 
-        /* ===== CALENDAR (اصلاح شده با اعداد شمسی) ===== */
+        /* ===== CALENDAR ===== */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
@@ -902,226 +1192,427 @@
             margin-top: 6px;
         }
 
+        /* ===== SETTINGS ===== */
+        .settings-group {
+            margin-bottom: 24px;
+        }
+        .settings-group h4 {
+            color: #94a3b8;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+        .settings-group .setting-row {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .settings-group .setting-row button {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .settings-group .setting-row .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .settings-group .setting-row .btn-primary:hover { background: #2563eb; }
+        .settings-group .setting-row .btn-secondary {
+            background: #8b5cf6;
+            color: white;
+        }
+        .settings-group .setting-row .btn-secondary:hover { background: #7c3aed; }
+        .settings-group .setting-row input[type="file"] {
+            display: none;
+        }
+        .settings-group .setting-row .motivation-edit-input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 40px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: #e2e8f0;
+            font-size: 14px;
+            min-width: 200px;
+            outline: none;
+        }
+        .settings-group .setting-row .motivation-edit-input:focus {
+            border-color: #3b82f6;
+        }
+        .settings-group .setting-note {
+            font-size: 13px;
+            color: #64748b;
+            margin-top: 6px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            margin-top: auto;
+            padding: 20px 0 10px 0;
+            border-top: 1px solid #334155;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            color: #94a3b8;
+        }
+        .footer a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .footer a:hover {
+            color: #f1f5f9;
+        }
+
+        /* ===== RESPONSIVE ===== */
         @media (max-width: 768px) {
             .weekly-grid { grid-template-columns: repeat(2, 1fr); }
             .calendar-grid { grid-template-columns: repeat(4, 1fr); }
             .charts-grid { grid-template-columns: 1fr; }
-            .motivation-section .motivation-text { font-size: 22px; }
             .tabs button { padding: 6px 14px; font-size: 13px; }
             .main-header .brand { font-size: 20px; }
             .main-header .study-time { font-size: 16px; }
+            .main-header .header-right { gap: 10px; }
+            .motivation-section .motivation-text { font-size: 20px; }
         }
         @media (max-width: 480px) {
             .weekly-grid { grid-template-columns: 1fr; }
             .calendar-grid { grid-template-columns: repeat(3, 1fr); }
             .timer-display { font-size: 42px; }
             .tabs button { padding: 6px 10px; font-size: 12px; }
-            .motivation-section .motivation-text { font-size: 18px; }
             .stats-grid { grid-template-columns: repeat(2, 1fr); }
             .main-header .brand { font-size: 16px; }
             .main-header .study-time { font-size: 14px; padding: 6px 14px; }
+            .motivation-section .motivation-text { font-size: 16px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ===== HEADER جدید ===== -->
+    <!-- ===== HEADER ===== -->
     <div class="main-header">
-        <div class="brand">📚 داشبورد <span>مدیریت مطالعاتی</span></div>
-        <div class="study-time" id="headerStudyTime">۰H : ۰۰MIN <span>امروز</span></div>
+        <div class="brand">📊 <span id="brandText">Dashboard</span></div>
+        <div class="header-right">
+            <div class="study-time" id="headerStudyTime">0h 0m <span id="todayLabel">Today</span></div>
+            <div class="lang-toggle">
+                <button id="langEn" class="active">EN</button>
+                <button id="langFa">FA</button>
+            </div>
+        </div>
     </div>
 
-    <!-- ===== جمله انگیزشی ===== -->
+    <!-- ===== جمله انگیزشی (نمایش در بالای صفحه) ===== -->
     <div class="motivation-section" id="motivationSection">
-        <div class="motivation-text" id="motivationDisplay">به توانایی‌هایت ایمان داشته باش ✨</div>
-        <div class="edit-motivation" id="editMotivationBtn">✏️ ویرایش </div>
+        <div class="motivation-text" id="motivationDisplay">Believe in your abilities ✨</div>
     </div>
 
     <!-- ===== STATUS BAR ===== -->
     <div class="status-bar">
         <div></div>
-        <div class="status" id="statusBadge">⏸️ آماده</div>
+        <div class="status" id="statusBadge">⏸️ Ready</div>
     </div>
 
     <!-- ===== TABS ===== -->
     <div class="tabs" id="tabsContainer">
-        <button class="active" data-tab="tab-timer">⏱ زمان‌بندی</button>
-        <button data-tab="tab-subjects">📚 دروس</button>
-        <button data-tab="tab-weekly">📅 برنامه هفتگی</button>
-        <button data-tab="tab-notes">📝 یادداشت</button>
-        <button data-tab="tab-calendar">🗓 تقویم</button>
+        <button class="active" data-tab="tab-timer">⏱ Timer</button>
+        <button data-tab="tab-projects">📚 Projects</button>
+        <button data-tab="tab-tasks">✅ Tasks</button>
+        <button data-tab="tab-weekly">📅 Weekly</button>
+        <button data-tab="tab-notes">📝 Notes</button>
+        <button data-tab="tab-calendar">🗓 Calendar</button>
+        <button data-tab="tab-settings">⚙️ Settings</button>
     </div>
 
     <!-- ============================================================ -->
-    <!-- ===== TAB 1: زمان‌بندی ===== -->
+    <!-- ===== TAB 1: TIMER ===== -->
     <div id="tab-timer" class="tab-content active">
+        <!-- ... (همانند قبل) ... -->
         <div class="card">
-            <h3>⏱ تایمر تمرکز</h3>
+            <h3>⏱ Focus Timer</h3>
             <div class="timer-mode">
-                <button id="modeStopwatch" class="active-mode">⏱ کرنومتر</button>
-                <button id="modeCountdown">⏳ شمارش معکوس</button>
+                <button id="modeStopwatch" class="active-mode">⏱ Stopwatch</button>
+                <button id="modeCountdown">⏳ Countdown</button>
             </div>
-            <div class="timer-display" id="timerDisplay">۰۰:۰۰:۰۰</div>
+            <div class="timer-display" id="timerDisplay">00:00:00</div>
             <div class="timer-controls">
-                <button id="startBtn">▶ شروع</button>
-                <button id="resetBtn">⟳ بازنشانی</button>
+                <button id="startBtn">▶ Start</button>
+                <button id="resetBtn">⟳ Reset</button>
             </div>
             <div class="quick-times">
-                <button data-minutes="5">۵ دقیقه</button>
-                <button data-minutes="15">۱۵ دقیقه</button>
-                <button data-minutes="25">۲۵ دقیقه</button>
-                <button data-minutes="45">۴۵ دقیقه</button>
-                <button data-minutes="60">۶۰ دقیقه</button>
+                <button data-minutes="5">5 min</button>
+                <button data-minutes="15">15 min</button>
+                <button data-minutes="25">25 min</button>
+                <button data-minutes="45">45 min</button>
+                <button data-minutes="60">60 min</button>
             </div>
             <div class="custom-countdown">
-                <input type="number" id="customMinutes" placeholder="دقیقه" min="1" step="1">
-                <button id="setCustomCountdown">⏳ تنظیم معکوس</button>
+                <input type="number" id="customMinutes" placeholder="Minutes" min="1" step="1">
+                <button id="setCustomCountdown">⏳ Set Countdown</button>
             </div>
             <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-                <select id="timerSubjectSelect" style="flex:1; padding:10px 14px; border-radius:40px; border:1px solid #334155; background:#0f172a; color:#e2e8f0; outline:none; min-width:120px;">
-                    <option value="">انتخاب درس</option>
+                <select id="timerProjectSelect" style="flex:1; padding:10px 14px; border-radius:40px; border:1px solid #334155; background:#0f172a; color:#e2e8f0; outline:none; min-width:120px;">
+                    <option value="">Select Project</option>
                 </select>
-                <button id="saveTimerSession" style="padding:10px 24px; border:none; border-radius:40px; background:#22c55e; color:white; font-weight:bold; cursor:pointer;">📥 ثبت جلسه</button>
+                <button id="saveTimerSession" style="padding:10px 24px; border:none; border-radius:40px; background:#22c55e; color:white; font-weight:bold; cursor:pointer;">📥 Save Session</button>
             </div>
         </div>
 
         <div class="card">
-            <h3>📊 آمار مطالعه</h3>
+            <h3>📊 Stats</h3>
             <div class="stats-grid" id="statsGrid">
                 <div class="stat-card">
-                    <div class="stat-number" id="statDaily">۰</div>
-                    <div class="stat-label">امروز (ساعت)</div>
+                    <div class="stat-number" id="statDaily">0</div>
+                    <div class="stat-label" id="statDailyLabel">Today (hrs)</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="statWeekly">۰</div>
-                    <div class="stat-label">این هفته (ساعت)</div>
+                    <div class="stat-number" id="statWeekly">0</div>
+                    <div class="stat-label" id="statWeeklyLabel">This Week (hrs)</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="statMonthly">۰</div>
-                    <div class="stat-label">این ماه (ساعت)</div>
+                    <div class="stat-number" id="statMonthly">0</div>
+                    <div class="stat-label" id="statMonthlyLabel">This Month (hrs)</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-number" id="statYearly">۰</div>
-                    <div class="stat-label">امسال (ساعت)</div>
+                    <div class="stat-number" id="statYearly">0</div>
+                    <div class="stat-label" id="statYearlyLabel">This Year (hrs)</div>
                 </div>
             </div>
         </div>
 
         <div class="card">
-            <h3>📋 جلسات مطالعه ثبت‌شده</h3>
+            <h3>📋 Study Logs</h3>
             <div class="study-log">
-                <input type="number" id="studyHours" placeholder="ساعت (مثلاً 2.5)" step="0.1" min="0">
-                <select id="studySubjectSelect">
-                    <option value="">انتخاب درس</option>
+                <input type="number" id="studyHours" placeholder="Hours (e.g. 2.5)" step="0.1" min="0">
+                <select id="studyProjectSelect">
+                    <option value="">Select Project</option>
                 </select>
-                <button id="logStudyBtn">➕ ثبت جلسه</button>
+                <button id="logStudyBtn">➕ Log Session</button>
             </div>
             <div id="studyLogList" style="margin-top:12px; max-height:200px; overflow-y:auto;"></div>
         </div>
-
-        <!-- ===== بخش پشتیبان‌گیری ===== -->
-        <div class="card">
-            <h3>💾 پشتیبان‌گیری و بازیابی</h3>
-            <div class="backup-section">
-                <button id="exportBackupBtn">📥 دریافت فایل پشتیبان</button>
-                <button id="importBackupBtn">📤 بارگذاری فایل پشتیبان</button>
-                <input type="file" id="importBackupInput" accept=".json">
-            </div>
-            <div style="margin-top:10px; font-size:13px; color:#64748b;">
-                ⚠️ توجه: بارگذاری فایل پشتیبان، تمام داده‌های فعلی شما را بازنویسی می‌کند.
-            </div>
-        </div>
     </div>
 
-    <!-- ===== TAB 2: دروس ===== -->
-    <div id="tab-subjects" class="tab-content">
+    <!-- ===== TAB 2: PROJECTS ===== -->
+    <div id="tab-projects" class="tab-content">
         <div class="global-progress-card">
-            <div class="label">📊 پیشرفت کلی کنکور</div>
-            <div class="big-number" id="globalProgressBig">۰٪</div>
+            <div class="label" id="globalProgressLabel">📊 Overall Progress</div>
+            <div class="big-number" id="globalProgressBig">0%</div>
             <div class="global-progress-bar"><div class="fill" id="globalProgressFill" style="width:0%;"></div></div>
-            <div style="margin-top:8px; font-size:14px; color:#94a3b8;" id="globalProgressDetail">۰ از ۰ مبحث</div>
+            <div style="margin-top:8px; font-size:14px; color:#94a3b8;" id="globalProgressDetail">0 of 0 topics</div>
         </div>
 
         <div class="card">
-            <h3>📚 مدیریت دروس و ریزمباحث</h3>
+            <h3>📚 Manage Projects & Topics</h3>
             <div class="add-row">
-                <input type="text" id="subjectInput" placeholder="نام درس جدید...">
-                <button id="addSubjectBtn">➕ افزودن درس</button>
+                <input type="text" id="projectInput" placeholder="New project name...">
+                <button id="addProjectBtn">➕ Add Project</button>
             </div>
             <div class="add-row">
-                <select id="subjectSelector"><option value="">انتخاب درس</option></select>
-                <input type="text" id="topicInput" placeholder="ریزمبحث جدید...">
-                <button id="addTopicBtn">➕ افزودن مبحث</button>
+                <select id="projectSelector"><option value="">Select Project</option></select>
+                <input type="text" id="topicInput" placeholder="New topic...">
+                <button id="addTopicBtn">➕ Add Topic</button>
             </div>
-            <div id="subjectsList"></div>
+            <div id="projectsList"></div>
         </div>
 
-        <!-- نمودارها -->
         <div class="card">
-            <h3>📈 نمودارهای پیشرفت</h3>
+            <h3>📈 Progress Charts</h3>
             <div class="charts-grid">
                 <div class="chart-box">
-                    <h4>🎯 پیشرفت نسبت به هدف هفتگی</h4>
+                    <h4 id="goalChartTitle">🎯 Progress vs Weekly Goal</h4>
                     <canvas id="goalChart" width="200" height="200"></canvas>
-                    <div class="percent-label" id="goalPercent">۰٪</div>
+                    <div class="percent-label" id="goalPercent">0%</div>
                 </div>
                 <div class="chart-box">
-                    <h4>📊 روند مطالعه روزانه (۷ روز اخیر)</h4>
+                    <h4 id="trendChartTitle">📊 Daily Study Trend (Last 7 Days)</h4>
                     <canvas id="trendChart" width="300" height="200"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ===== TAB 3: برنامه هفتگی ===== -->
+    <!-- ===== TAB 3: TASKS ===== -->
+    <div id="tab-tasks" class="tab-content">
+        <div class="card">
+            <h3>✅ Tasks</h3>
+            <div class="task-filters">
+                <input type="date" id="taskDateFilter" value="">
+                <select id="taskCategoryFilter">
+                    <option value="all">All Categories</option>
+                </select>
+                <select id="taskFilterType">
+                    <option value="today">Today</option>
+                    <option value="future">Future</option>
+                    <option value="all">All</option>
+                </select>
+                <button id="refreshTasksBtn">🔄 Refresh</button>
+                <button class="add-task-btn" id="openAddTaskModal">➕ New Task</button>
+            </div>
+            <div id="tasksList"></div>
+        </div>
+    </div>
+
+    <!-- ===== TAB 4: WEEKLY ===== -->
     <div id="tab-weekly" class="tab-content">
         <div class="card">
-            <h3>📅 برنامه هفتگی</h3>
+            <h3>📅 Weekly Plan</h3>
             <div class="weekly-plan-list" id="weeklyPlanList"></div>
             <div class="weekly-actions">
-                <input type="text" id="newPlanName" placeholder="نام برنامه (مثلاً هفته اول)" style="flex:1;">
-                <input type="number" id="planHourGoal" placeholder="هدف ساعتی هفته" step="0.5" min="0" style="flex:0.7; min-width:100px;">
-                <button id="createPlanBtn">➕ ساخت برنامه</button>
-                <button id="deletePlanBtn" class="del-plan">🗑️ حذف برنامه</button>
+                <input type="text" id="newPlanName" placeholder="Plan name (e.g. Week 1)" style="flex:1;">
+                <input type="number" id="planHourGoal" placeholder="Weekly hour goal" step="0.5" min="0" style="flex:0.7; min-width:100px;">
+                <button id="createPlanBtn">➕ Create Plan</button>
+                <button id="deletePlanBtn" class="del-plan">🗑️ Delete Plan</button>
             </div>
+            <div id="weeklyGoalContainer"></div>
             <div class="weekly-grid" id="weeklyGrid"></div>
         </div>
     </div>
 
-    <!-- ===== TAB 4: یادداشت ===== -->
+    <!-- ===== TAB 5: NOTES ===== -->
     <div id="tab-notes" class="tab-content">
         <div class="card">
-            <h3>📝 یادداشت‌ها</h3>
+            <h3>📝 Notes</h3>
             <div class="note-editor">
-                <input type="text" id="noteTitle" placeholder="عنوان یادداشت...">
-                <textarea id="noteContent" placeholder="متن یادداشت..."></textarea>
-                <button id="saveNoteBtn">💾 ذخیره یادداشت</button>
+                <input type="text" id="noteTitle" placeholder="Note title...">
+                <textarea id="noteContent" placeholder="Note content..."></textarea>
+                <button id="saveNoteBtn">💾 Save Note</button>
             </div>
             <div class="note-list" id="noteList"></div>
         </div>
     </div>
 
-    <!-- ===== TAB 5: تقویم (اصلاح شده با اعداد شمسی) ===== -->
+    <!-- ===== TAB 6: CALENDAR ===== -->
     <div id="tab-calendar" class="tab-content">
         <div class="card">
-            <h3>🗓 تقویم شمسی</h3>
+            <h3>🗓 Gregorian Calendar</h3>
             <div class="calendar-nav">
                 <button id="calPrev">‹</button>
-                <span class="month-label" id="calMonthLabel">مهر ۱۴۰۴</span>
+                <span class="month-label" id="calMonthLabel">January 2025</span>
                 <button id="calNext">›</button>
             </div>
             <div class="calendar-grid" id="calendarGrid"></div>
 
             <div class="countdown-section">
-                <h4>⏳ روزشمار رویدادها</h4>
+                <h4>⏳ Event Countdowns</h4>
                 <div class="countdown-input">
-                    <input type="text" id="eventTitle" placeholder="عنوان رویداد (مثلاً کنکور)">
+                    <input type="text" id="eventTitle" placeholder="Event title (e.g. Exam)">
                     <input type="datetime-local" id="eventDateTime">
-                    <button id="addEventBtn">➕ افزودن رویداد</button>
+                    <button id="addEventBtn">➕ Add Event</button>
                 </div>
                 <div class="countdown-list" id="countdownList"></div>
             </div>
         </div>
+    </div>
+
+    <!-- ===== TAB 7: SETTINGS ===== -->
+    <div id="tab-settings" class="tab-content">
+        <div class="card">
+            <h3>⚙️ Settings</h3>
+
+            <div class="settings-group">
+                <h4>💾 Backup & Restore</h4>
+                <div class="setting-row">
+                    <button class="btn-primary" id="exportBackupBtn">📥 Download Backup</button>
+                    <button class="btn-secondary" id="importBackupBtn">📤 Upload Backup</button>
+                    <input type="file" id="importBackupInput" accept=".json">
+                </div>
+                <div class="setting-note">⚠️ Uploading will overwrite all current data.</div>
+            </div>
+
+            <div class="settings-group">
+                <h4>✏️ Motivation Message</h4>
+                <div class="setting-row">
+                    <input type="text" class="motivation-edit-input" id="motivationInput" placeholder="Enter motivation message...">
+                    <button class="btn-primary" id="saveMotivationBtn">💾 Save</button>
+                </div>
+                <div class="setting-note" id="currentMotivationDisplay">Current: Believe in your abilities ✨</div>
+            </div>
+
+            <div class="settings-group">
+                <h4>🔗 Social Links</h4>
+                <div class="setting-row" style="flex-direction:column; align-items:flex-start; gap:6px;">
+                    <a href="https://github.com/mahdifaramarzpour" target="_blank" style="color:#94a3b8; text-decoration:none;">🔗 GitHub: mahdifaramarzpour</a>
+                    <a href="https://www.linkedin.com/in/mahdifaramarzpour/" target="_blank" style="color:#94a3b8; text-decoration:none;">🔗 LinkedIn: mahdifaramarzpour</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODAL ===== -->
+    <div class="modal-overlay" id="taskModal">
+        <div class="modal-box">
+            <h2 id="taskModalTitle">➕ New Task</h2>
+            <div class="form-group">
+                <label id="taskTitleLabel">Task Title *</label>
+                <input type="text" id="taskTitleInput" placeholder="Title">
+            </div>
+            <div class="form-group">
+                <label id="taskDescLabel">Description</label>
+                <textarea id="taskDescInput" placeholder="Description (optional)"></textarea>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label id="taskCategoryLabel">Category</label>
+                    <select id="taskCategoryInput"></select>
+                </div>
+                <div class="form-group">
+                    <label id="taskPriorityLabel">Priority</label>
+                    <select id="taskPriorityInput">
+                        <option value="low">🟢 Low</option>
+                        <option value="medium" selected>🟡 Medium</option>
+                        <option value="high">🔴 High</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label id="taskDateLabel">Date (for one-time tasks)</label>
+                    <input type="date" id="taskDateInput">
+                </div>
+                <div class="form-group">
+                    <label id="taskRecurrenceLabel">Recurrence</label>
+                    <select id="taskRecurrenceInput">
+                        <option value="none">None</option>
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly (specific days)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" id="weeklyDaysGroup" style="display:none;">
+                <label id="taskWeeklyDaysLabel">Weekly Days</label>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:4px;">
+                    <label><input type="checkbox" class="weekly-day" value="0"> Sun</label>
+                    <label><input type="checkbox" class="weekly-day" value="1"> Mon</label>
+                    <label><input type="checkbox" class="weekly-day" value="2"> Tue</label>
+                    <label><input type="checkbox" class="weekly-day" value="3"> Wed</label>
+                    <label><input type="checkbox" class="weekly-day" value="4"> Thu</label>
+                    <label><input type="checkbox" class="weekly-day" value="5"> Fri</label>
+                    <label><input type="checkbox" class="weekly-day" value="6"> Sat</label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label id="taskSubtasksLabel">Subtasks (one per line)</label>
+                <textarea id="taskSubtasksInput" placeholder="e.g.&#10;Read text&#10;Solve exercises"></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="closeTaskModal">Cancel</button>
+                <button class="btn-save" id="saveTaskBtn">💾 Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="footer">
+        <a href="https://github.com/mahdifaramarzpour" target="_blank">🔗 GitHub</a>
+        <a href="https://www.linkedin.com/in/mahdifaramarzpour/" target="_blank">🔗 LinkedIn</a>
     </div>
 
     <script src="dashboard.js"></script>
