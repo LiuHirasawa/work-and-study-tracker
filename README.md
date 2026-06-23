@@ -5,7 +5,7 @@ A lightweight, self‑hosted study dashboard designed to help learners track the
 > **Built for personal use** – I created this tool because I needed a simple, offline‑first way to manage my own study sessions. It is not a commercial product, but a practical solution to a real need.
 
 ---
-
+![Dashboard Preview](./dashboard.png)
 ## 🧠 Why This Project?
 
 As an AI researcher and developer, I spend a lot of time learning new concepts. I wanted a tool that:
