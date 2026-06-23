@@ -58,12 +58,6 @@ This project is the result of that need. It is built with **vanilla HTML/CSS/Jav
 
 ---
 
-## 🖼️ Screenshots
-
-*(Add your own screenshots here if you like – you can include them in the repository and link them.)*
-
----
-
 ## 📁 Project Structure
 study-dashboard/
 ├── dashboard.html # Main application page
