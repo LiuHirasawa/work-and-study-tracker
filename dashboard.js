@@ -1411,20 +1411,70 @@ function renderTrendChart() {
 
         ctx.clearRect(0, 0, width, height);
 
+        // Get selected range
+        const rangeSelect = document.getElementById('trendRange');
+        const selectedRange = rangeSelect ? rangeSelect.value : '7';
+
+        const now = new Date();
         const days = [];
         const hours = [];
-        const now = new Date();
-        for (let i = 6; i >= 0; i--) {
+
+        let dayCount;
+
+        if (selectedRange === 'all') {
+            // Find the earliest study log date
+            if (currentData.studyLogs.length === 0) {
+                dayCount = 7;
+            } else {
+                const dates = currentData.studyLogs.map(log =>
+                    new Date(log.date)
+                );
+
+                const earliest = new Date(Math.min(...dates));
+                earliest.setHours(0, 0, 0, 0);
+
+                const today = new Date(now);
+                today.setHours(0, 0, 0, 0);
+
+                dayCount = Math.floor(
+                    (today - earliest) / (1000 * 60 * 60 * 24)
+                ) + 1;
+
+                // Avoid an excessively large chart
+                dayCount = Math.min(dayCount, 365);
+            }
+        } else {
+            dayCount = parseInt(selectedRange);
+        }
+
+        for (let i = dayCount - 1; i >= 0; i--) {
             const d = new Date(now);
             d.setDate(d.getDate() - i);
-            const dateStr = d.toISOString().split('T')[0];
-            const dayName = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+
+            const dateStr =
+                d.getFullYear() + '-' +
+                String(d.getMonth() + 1).padStart(2, '0') + '-' +
+                String(d.getDate()).padStart(2, '0');
+
             let dayHours = 0;
+
             currentData.studyLogs.forEach(log => {
                 if (log.date.split('T')[0] === dateStr) {
-                    dayHours += log.hours;
+                    dayHours += Number(log.hours) || 0;
                 }
             });
+
+            // Different labels depending on range
+            let dayName;
+
+            if (dayCount <= 7) {
+                dayName =
+                    ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getDay()];
+            } else {
+                dayName =
+                    `${d.getMonth() + 1}/${d.getDate()}`;
+            }
+
             days.push(dayName);
             hours.push(dayHours);
         }
@@ -1443,43 +1493,82 @@ function renderTrendChart() {
         ctx.stroke();
 
         const points = hours.map((h, i) => {
-            const x = padding + (i / (hours.length - 1)) * chartWidth;
-            const y = height - padding - (h / maxVal) * chartHeight;
+            const x = padding +
+                (i / Math.max(hours.length - 1, 1)) * chartWidth;
+
+            const y = height -
+                padding -
+                (h / maxVal) * chartHeight;
+
             return { x, y, val: h };
         });
 
+        // Draw line
         ctx.beginPath();
         ctx.strokeStyle = '#3b82f6';
         ctx.lineWidth = 2.5;
+
         points.forEach((p, i) => {
-            if (i === 0) ctx.moveTo(p.x, p.y);
-            else ctx.lineTo(p.x, p.y);
+            if (i === 0) {
+                ctx.moveTo(p.x, p.y);
+            } else {
+                ctx.lineTo(p.x, p.y);
+            }
         });
+
         ctx.stroke();
 
+        // Draw points
         points.forEach(p => {
             ctx.beginPath();
-            ctx.arc(p.x, p.y, 5, 0, 2 * Math.PI);
+            ctx.arc(p.x, p.y, 4, 0, 2 * Math.PI);
             ctx.fillStyle = '#3b82f6';
             ctx.fill();
-            ctx.fillStyle = '#f1f5f9';
-            ctx.font = '10px Tahoma';
-            ctx.textAlign = 'center';
-            ctx.fillText(p.val.toFixed(1), p.x, p.y - 10);
+
+            // Only display values when there aren't too many points
+            if (dayCount <= 30) {
+                ctx.fillStyle = '#f1f5f9';
+                ctx.font = '10px Tahoma';
+                ctx.textAlign = 'center';
+                ctx.fillText(
+                    p.val.toFixed(1),
+                    p.x,
+                    p.y - 10
+                );
+            }
         });
 
+        // Draw X-axis labels
         ctx.fillStyle = '#94a3b8';
         ctx.font = '10px Tahoma';
         ctx.textAlign = 'center';
+
+        const labelStep =
+            dayCount <= 7 ? 1 :
+            dayCount <= 30 ? 5 :
+            dayCount <= 90 ? 10 : 30;
+
         days.forEach((d, i) => {
-            const x = padding + (i / (days.length - 1)) * chartWidth;
-            ctx.fillText(d, x, height - padding + 16);
+            if (
+                i === 0 ||
+                i === days.length - 1 ||
+                i % labelStep === 0
+            ) {
+                const x = padding +
+                    (i / Math.max(days.length - 1, 1)) * chartWidth;
+
+                ctx.fillText(
+                    d,
+                    x,
+                    height - padding + 16
+                );
+            }
         });
+
     } catch (err) {
         console.error("Render trend chart error:", err);
     }
 }
-
 // ============================================================
 //  پشتیبان‌گیری
 // ============================================================
